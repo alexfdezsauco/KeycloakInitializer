@@ -1,5 +1,6 @@
 package orc.keycloak.poc;
 
+import org.junit.Ignore;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.ClientRepresentation;
@@ -15,6 +16,7 @@ import java.util.List;
 public class Test {
 
     @org.junit.Test
+    @Ignore
     public void initialization() {
         Keycloak realmClient = Keycloak.getInstance("http://127.0.0.1:5004/auth", "master", "admin", "Password123!", "admin-cli");
         RealmResource master = realmClient.realm("master");
