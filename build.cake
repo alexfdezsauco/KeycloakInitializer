@@ -24,7 +24,7 @@ var DockerRepositoryPrefix = string.IsNullOrWhiteSpace(dockerRepository) ? strin
 
 Task ("UpdateVersion")
   .Does (() => {
-    StartProcess("dotnet", new ProcessSettings
+     StartProcess("dotnet", new ProcessSettings
       {
           Arguments = new ProcessArgumentBuilder()
           .Append("gitversion")
@@ -45,8 +45,7 @@ Task ("UpdateVersion")
           RedirectStandardOutput = true
       }, out redirectedStandardOutput);
 
-
-    NuGetVersionV2 = redirectedStandardOutput.FirstOrDefault (s => s.Contains ("NuGetVersionV2")).Split (':') [1].Trim (',').Trim ('"');
+      NuGetVersionV2 = redirectedStandardOutput.FirstOrDefault(s => s.Contains("NuGetVersionV2")).Split(':')[1].Trim(',', ' ', '"');
   });
 
 
