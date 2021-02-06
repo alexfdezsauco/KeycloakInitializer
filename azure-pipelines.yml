@@ -23,6 +23,6 @@ steps:
   displayName: 'Docker Push'
   inputs:
     containerRegistry: 'DockerHub'
-    repository: 'alexfdezsauco/smart-inbox-emby'
+    repository: 'alexfdezsauco/keycloak-initializer'
     command: 'push'
     tags: '$(GitVersion.NuGetVersion),latest'
