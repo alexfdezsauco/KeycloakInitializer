@@ -1,0 +1,49 @@
+{
+  "keycloak": {
+    "url": "http://127.0.0.1:5004/auth",
+    "realm": "master",
+    "username": "admin",
+    "password": "Password123!",
+    "clientId": "admin-cli"
+  },
+  "apps": [
+    {
+      "name": "webgums-portal-client",
+      "baseUrl": "http://localhost:5000",
+      "roles": [
+        "WG::Administrator",
+        "SES::Reseller administrator",
+        "SES::Reseller employee",
+        "SES::Company employee"
+      ],
+      "allowAccessTo": [
+        "webgums-licensing-server",
+        "webgums-auditing-server",
+        "webgums-support-server"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "webgums-licensing-server",
+      "baseUrl": "http://localhost:5001",
+      "useRolesFrom": [
+        "webgums-portal-client"
+      ]
+    },
+    {
+      "name": "webgums-auditing-server",
+      "baseUrl": "http://localhost:5002",
+      "useRolesFrom": [
+        "webgums-portal-client"
+      ]
+    },
+    {
+      "name": "webgums-support-server",
+      "baseUrl": "http://localhost:5003",
+      "useRolesFrom": [
+        "webgums-portal-client"
+      ]
+    }
+  ]
+}
