@@ -19,8 +19,8 @@ COPY . .
 RUN mvn package -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -DskipTests=true
 
 WORKDIR /build/output
-RUN jar -xvf smartinbox-emby-server-0.1.0.jar
-RUN rm smartinbox-emby-server-0.1.0.jar
+RUN jar -xvf keycloak-initializer-0.1.0.jar
+RUN rm keycloak-initializer-0.1.0.jar
 
 FROM $DOCKER_REPOSITORY_PROXY/openjdk:8u171-jre
 
