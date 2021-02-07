@@ -1,7 +1,7 @@
 Keycloak Initializer
 ====================
 
-This provides a basic configuration keycloak to ensure the access to the specified services from the specified clients. 
+This provides a basic configuration [Keycloak](https://www.keycloak.org/) to ensure the access to the specified services from the specified clients. 
 
 This will create the clients, the roles for such clients, clients scopes for audience for all services, and also create the role mapper for all services. 
 
