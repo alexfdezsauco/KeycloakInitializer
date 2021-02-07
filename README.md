@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.KeycloakInitializer?branchName=master)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=5&branchName=master)
+
 Keycloak Initializer
 ====================
 
