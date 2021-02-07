@@ -5,7 +5,7 @@ This provides a basic configuration keycloak to ensure the access to the specifi
 
 This will create the clients, the roles for such clients, clients scopes for audience for all services, and also create the role mapper for all services. 
 
-# How to use it
+## How to use it
 
 1) Create a `config.json` file with a content like this:
 
