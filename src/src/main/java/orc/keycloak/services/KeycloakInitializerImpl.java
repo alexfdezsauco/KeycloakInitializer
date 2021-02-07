@@ -27,7 +27,7 @@ public class KeycloakInitializerImpl implements KeycloakInitializer {
     private final Config config;
 
     private static Logger LOG = LoggerFactory
-            .getLogger(KeycloakInitializer.class);
+            .getLogger(KeycloakInitializerImpl.class);
 
     public KeycloakInitializerImpl(Config config) {
         this.config = config;
