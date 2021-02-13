@@ -16,10 +16,7 @@ import org.keycloak.representations.idm.authorization.ResourceServerRepresentati
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 public class KeycloakInitializerImpl implements KeycloakInitializer {
@@ -48,12 +45,14 @@ public class KeycloakInitializerImpl implements KeycloakInitializer {
 
         removeClients(clientsResource);
         removeServicesAndScopes(clientsResource, clientScopesResource);
+
         addServicesAndScopes(clientsResource, clientScopesResource);
         addClients(clientsResource, clientScopesResource);
         createRoleMappings(clientsResource);
     }
 
     private void createRoleMappings(ClientsResource clientsResource) {
+        HashSet<String> processed = new HashSet<>();
         App[] clients = config.getApps();
         Service[] services = config.getServices();
         if (services != null && clients != null) {
@@ -63,32 +62,43 @@ public class KeycloakInitializerImpl implements KeycloakInitializer {
                 for (String client : useRolesFrom) {
                     Optional<App> appOptional = Arrays.stream(clients).filter(app -> app.getName().equals(client)).findFirst();
                     if (appOptional.isPresent()) {
-                        Optional<ClientRepresentation> clientRepresentationOptional = clientsResource.findAll().stream().filter(c -> c.getName().equals(service.getName())).findFirst();
-                        if (clientRepresentationOptional.isPresent()) {
-                            LOG.info(String.format("Creating role mapping for service %s for users from client app %s", service.getName(), client));
-                            ClientRepresentation clientRepresentation = clientRepresentationOptional.get();
-                            ClientResource clientResource = clientsResource.get(clientRepresentation.getId());
-                            ProtocolMappersResource protocolMappers = clientResource.getProtocolMappers();
-                            ProtocolMapperRepresentation protocolMapperRepresentation = new ProtocolMapperRepresentation();
-                            protocolMapperRepresentation.setName(String.format("User client roles %s", client));
-                            protocolMapperRepresentation.setProtocol("openid-connect");
-                            protocolMapperRepresentation.setProtocolMapper("oidc-usermodel-client-role-mapper");
-                            HashMap<String, String> config = new HashMap<>();
-                            config.put("access.token.claim", "true");
-                            config.put("claim.name", "roles");
-                            config.put("id.token.claim", "true");
-                            config.put("jsonType.label", "String");
-                            config.put("multivalued", "true");
-                            config.put("userinfo.token.claim", "true");
-                            config.put("usermodel.clientRoleMapping.clientId", client);
-                            protocolMapperRepresentation.setConfig(config);
-                            protocolMappers.createMapper(protocolMapperRepresentation);
+                        Optional<ClientRepresentation> appClientRepresentationOptional = clientsResource.findAll().stream().filter(c -> c.getName().equals(client)).findFirst();
+                        if(appClientRepresentationOptional.isPresent() && !processed.contains(client)) {
+                            createRoleMapper(clientsResource, service, client, appClientRepresentationOptional.get());
+                            processed.add(client);
+                        }
+
+                        Optional<ClientRepresentation> serviceClientRepresentationOptional = clientsResource.findAll().stream().filter(c -> c.getName().equals(service.getName())).findFirst();
+                        if (serviceClientRepresentationOptional.isPresent() && !processed.contains(service.getName())) {
+                            ClientRepresentation clientRepresentation = serviceClientRepresentationOptional.get();
+                            createRoleMapper(clientsResource, service, client, clientRepresentation);
+                            processed.add(service.getName());
                         }
                     }
                 }
             }
 
         }
+    }
+
+    private void createRoleMapper(ClientsResource clientsResource, Service service, String client, ClientRepresentation clientRepresentation) {
+        LOG.info(String.format("Creating role mapping for service %s for users from client app %s", service.getName(), client));
+        ClientResource clientResource = clientsResource.get(clientRepresentation.getId());
+        ProtocolMappersResource protocolMappers = clientResource.getProtocolMappers();
+        ProtocolMapperRepresentation protocolMapperRepresentation = new ProtocolMapperRepresentation();
+        protocolMapperRepresentation.setName(String.format("User client roles %s", client));
+        protocolMapperRepresentation.setProtocol("openid-connect");
+        protocolMapperRepresentation.setProtocolMapper("oidc-usermodel-client-role-mapper");
+        HashMap<String, String> config = new HashMap<>();
+        config.put("access.token.claim", "true");
+        config.put("claim.name", "roles");
+        config.put("id.token.claim", "true");
+        config.put("jsonType.label", "String");
+        config.put("multivalued", "true");
+        config.put("userinfo.token.claim", "true");
+        config.put("usermodel.clientRoleMapping.clientId", client);
+        protocolMapperRepresentation.setConfig(config);
+        protocolMappers.createMapper(protocolMapperRepresentation);
     }
 
     private void addClients(ClientsResource clientsResource, ClientScopesResource clientScopesResource) {
@@ -214,6 +224,7 @@ public class KeycloakInitializerImpl implements KeycloakInitializer {
         clientRepresentation.setWebOrigins(client.getWebOrigins());
         clientRepresentation.setClientAuthenticatorType("client-secret");
         clientRepresentation.setStandardFlowEnabled(true);
+        clientRepresentation.setImplicitFlowEnabled(true);
         clientRepresentation.setDirectAccessGrantsEnabled(true);
         clientRepresentation.setBearerOnly(false);
         clientRepresentation.setConsentRequired(false);
