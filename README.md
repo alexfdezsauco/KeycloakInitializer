@@ -1,11 +1,13 @@
+[![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.KeycloakInitializer?branchName=master)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=5&branchName=master)
+
 Keycloak Initializer
 ====================
 
-This provides a basic configuration keycloak to ensure the access to the specified services from the specified clients. 
+This provides a basic configuration [Keycloak](https://www.keycloak.org/) to ensure the access to the specified services from the specified clients. 
 
 This will create the clients, the roles for such clients, clients scopes for audience for all services, and also create the role mapper for all services. 
 
-# How to use it
+## How to use it
 
 1) Create a `config.json` file with a content like this:
 
